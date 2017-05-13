@@ -3,7 +3,7 @@
   background-color: @main-bg;
   overflow: auto;
   
-  .xw-table-layout {
+  .table-layout {
     flex: 1;
     display: flex;
     flex-flow: row;
@@ -13,23 +13,23 @@
       width: 0;
     }
     
-    .xw-tray {
+    .tray {
       transition: all 0.25s ease;
       
-      &.xw-tray-center {
+      &.tray-center {
         flex: 1;
         order: 1;
       }
       
-      &.xw-tray-right {
+      &.tray-right {
         width: 280px;
         max-width: 280px;
         order: 100;
         background-color: lighten(@main-bg, 3%);
         border-left: 1px solid @border-color;
       }
-    
-      &.xw-tray-left {
+      
+      &.tray-left {
         width: 280px;
         max-width: 280px;
         order: -100;
