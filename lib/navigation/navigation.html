@@ -1,0 +1,27 @@
+<ul class="nav xw-navigation">
+  <li rv-each-item="items" rv-if="item.label" class="xw-navigation-label pt15">{item.label}</li>
+
+  <li rv-each-item="items" rv-if="!item.label" rv-class-active="item.active">
+    <a href="javascript:;">
+      <var rv-html="item.icon"></var>
+      <span class="xw-navigation-title">{item.title} {item.active}</span>
+    </a>
+  </li>
+</ul>
+  
+<!--<li>
+  <a href="javascript:;" class="xw-accordion-open">
+    <i class="fa fa-cube"></i>
+    <span class="xw-navigation-title">내 서비스</span>
+    <span class="caret xw-accordion-toggle"></span>
+  </a>
+  
+  <ul class="nav sub-nav">
+    <li ng-repeat="service in services">
+      <a href="/service/{{service.id}}" route>
+        <i class="fa fa-cube"></i>
+        <span class="sidebar-title">{{service.name}}</span>
+      </a>
+    </li>
+  </ul>
+</li>-->

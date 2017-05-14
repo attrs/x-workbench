@@ -3,25 +3,26 @@
   background-color: @main-bg;
   overflow: auto;
   
-  .table-layout {
+  .xw-table-layout {
     flex: 1;
     display: flex;
     flex-flow: row;
     overflow: auto;
     
     &.hidden {
+      display: none;
       width: 0;
     }
     
-    .tray {
+    .xw-tray {
       transition: all 0.25s ease;
       
-      &.tray-center {
+      &.xw-tray-center {
         flex: 1;
         order: 1;
       }
       
-      &.tray-right {
+      &.xw-tray-right {
         width: 280px;
         max-width: 280px;
         order: 100;
@@ -29,7 +30,7 @@
         border-left: 1px solid @border-color;
       }
       
-      &.tray-left {
+      &.xw-tray-left {
         width: 280px;
         max-width: 280px;
         order: -100;
