@@ -23,21 +23,19 @@
       display: table-cell;
       border-top: 1px solid @border-color;
       border-left: 1px solid @border-color;
-      padding: 8px;
+      padding: 6px;
       text-align: center;
       cursor: pointer;
       color: lighten(@text-color, 15%);
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      word-wrap: normal;
+      overflow: hidden;
+      font-size: 0.8em;
       
       .xw-tab-item-icon {
-        font-size: 1.3em;
+        font-size: 1.6em;
         margin-bottom: 5px;
-      }
-      
-      .xw-tab-item-title {
-        font-size: 0.8em;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-        overflow: hidden;
       }
       
       &.active {
@@ -78,6 +76,9 @@
       white-space: nowrap;
       word-wrap: normal;
       overflow: hidden;
+      font-size: 0.9em;
+      line-height: 1em;
+      padding: 12px 8px;
       
       .xw-tab-item-icon {
         font-size: 1em;
@@ -85,12 +86,6 @@
         display: inline-block;
         margin-right: 8px;
         margin-bottom: 0;
-      }
-      
-      .xw-tab-item-title {
-        font-size: 0.9em;
-        line-height: 1em;
-        display: inline-block;
       }
     }
   }

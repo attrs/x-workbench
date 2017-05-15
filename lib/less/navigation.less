@@ -127,7 +127,7 @@
 .xw-dark .xw-navigation, .xw-navigation.xw-dark {
   & > li {
     a {
-      color: @text-color-dark;
+      color: darken(@text-color-dark, 5%);
       
       & > i {
         color: lighten(@text-color-dark, 10%);
@@ -135,8 +135,12 @@
     }
     
     &.active {
-      & > a > i {
-        color: @active-color-dark;
+      & > a {
+        color: lighten(@text-color-dark, 10%);
+         
+        & > i {
+         color: @active-color-dark;
+        }
       }
     }
   
