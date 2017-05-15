@@ -3,12 +3,12 @@
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
-  
+  list-style: none;
+  padding-left: 0px;
   
   & > li {
     position: relative;
-    color: #fff;
-    font-weight: 600;
+    display: block;
     line-height: 37px;
     padding: 0;
     margin: 0;
@@ -17,19 +17,22 @@
     list-style: none;
     
     a {
-      color: #fff;
+      position: relative;
+      display: block;
       padding: 0;
       margin: 0;
+      
       
       & > i {
         line-height: 1em;
         font-size: 0.85em;
-        color: darken(#fff, 40%);
+        color: lighten(@text-color, 10%);
         width: 22px;
         padding-right: 8px;
       }
       
       &:hover, &:active, &:focus {
+        text-decoration: none;
         background: none;
       }
       
@@ -76,7 +79,7 @@
     
     &.active {
       & > a > i {
-        color: @sidebar-active-color;
+        color: @active-color;
       }
     }
   
@@ -84,14 +87,13 @@
       padding-left: 18px;
       line-height: 20px;
       text-transform: uppercase;
-      color: #908885;
-      font-weight: 600;
-      font-size: 12px;
+      color: @sidebar-label-color;
+      font-weight: bold;
+      font-size: 0.9em;
     }
     
     ul {
       display: none;
-      background-color: lighten(@sidebar-bg-color, 2%);
       
       & > li {
         line-height: 44px;
@@ -114,7 +116,49 @@
           }
           
           & > a > i {
-            color: @sidebar-active-color;
+            color: @active-color;
+          }
+        }
+      }
+    }
+  }
+}
+
+.xw-dark .xw-navigation, .xw-navigation.xw-dark {
+  & > li {
+    a {
+      color: @text-color-dark;
+      
+      & > i {
+        color: lighten(@text-color-dark, 10%);
+      }
+    }
+    
+    &.active {
+      & > a > i {
+        color: @active-color-dark;
+      }
+    }
+  
+    &.xw-navigation-label {
+      color: @sidebar-label-color-dark;
+    }
+    
+    ul {
+      background-color: darken(@bg-color-dark, 2%);
+      
+      & > li {
+        & > a {
+          color: #ddd;
+          
+          &:hover {
+            color: #fff;
+          }
+        }
+        
+        &.active {
+          & > a > i {
+            color: @active-color-dark;
           }
         }
       }
