@@ -1,6 +1,6 @@
 {
   "name": "x-workbench",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "Extensible Admin UI",
   "main": "lib/index.js",
   "homepage": "https://attrs.github.io/x-workbench/",
