@@ -35,13 +35,14 @@
   @import "tabbed";
   @import "flexbox";
   @import "cards";
-}
-
-.xw-dark {
-  background-color: @bg-color-dark;
-  color: @text-color-dark;
   
-  a, a:hover, a:active, a:focus {
+  &.xw-dark, & .xw-dark {
+    background-color: @bg-color-dark;
     color: @text-color-dark;
+  
+    a, a:hover, a:active, a:focus {
+      color: @text-color-dark;
+    }
   }
 }
+

@@ -7,7 +7,7 @@
   "repository": "attrs/x-workbench",
   "author": "joje <joje.attrs@gmail.com>",
   "scripts": {
-    "demo": "node node_modules/webmodules/bin/wpm.js up docs -s",
+    "demo": "node node_modules/webmodules/bin/wpm.js up 8000 docs -s",
     "build": "gulp build"
   },
   "license": "MIT",
