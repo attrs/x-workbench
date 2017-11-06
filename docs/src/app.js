@@ -1,7 +1,7 @@
 var $ = require('tinyselector');
 var Workbench = require('x-workbench');
 
-var wb = new Workbench('dashboard');
+var wb = new Workbench('dashboard'); 
 
 wb.find('logo').html('<b>X</b>WORKBENCH')
 .workbench()

@@ -1245,7 +1245,7 @@ module.exports = function(ctx) {
 var $ = __webpack_require__(0);
 var Workbench = __webpack_require__(4);
 
-var wb = new Workbench('dashboard');
+var wb = new Workbench('dashboard'); 
 
 wb.find('logo').html('<b>X</b>WORKBENCH')
 .workbench()
