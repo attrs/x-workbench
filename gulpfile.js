@@ -91,4 +91,4 @@ gulp.task('docs', ['build.docs']);
 
 // conclusion
 gulp.task('watch', ['build.watch']);
-gulp.task('default', ['build']);
+gulp.task('default', ['docs']);
