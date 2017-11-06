@@ -3,7 +3,7 @@ var Workbench = require('x-workbench');
 
 var wb = new Workbench('dashboard'); 
 
-wb.find('logo').html('<b>X</b>WORKBENCH')
+wb.find('logo').html('<a href="https://github.com/attrs/x-workbench" target="_blank"><b>X</b>WORKBENCH</a>')
 .workbench()
 .find('sidebar-cards')
 .additem({
