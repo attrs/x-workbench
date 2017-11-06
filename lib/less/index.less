@@ -9,11 +9,9 @@
 
 @active-color-dark:    #55AAC7;
 @bg-color-dark:        #2D3230;
+@bg-color-dark-2:      #292826;
 @border-color-dark:    rgba(255,255,255,0.07);
 @text-color-dark:      #CACBCB;
-
-@sidebar-label-color:  lighten(@text-color, 5%);
-@sidebar-label-color-dark:  #828684;
 
 .xw {
   padding: 0;
@@ -35,13 +33,19 @@
   @import "tabbed";
   @import "flexbox";
   @import "cards";
-}
-
-.xw-dark {
-  background-color: @bg-color-dark;
-  color: @text-color-dark;
+  @import "profile";
   
-  a, a:hover, a:active, a:focus {
+  &.xw-dark, & .xw-dark {
+    background-color: @bg-color-dark;
     color: @text-color-dark;
+    
+    a, a:hover, a:active, a:focus {
+      color: @text-color-dark;
+    }
+  }
+  
+  .xw-hidden {
+    display: none !important;
   }
 }
+
