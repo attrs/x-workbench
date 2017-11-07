@@ -81,16 +81,16 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 15);
+/******/ 	return __webpack_require__(__webpack_require__.s = 18);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Context = __webpack_require__(12);
+var Context = __webpack_require__(15);
 
-__webpack_require__(13)(Context);
+__webpack_require__(16)(Context);
 
 var def = Context(document);
 var lib = module.exports = function(doc) {
@@ -118,6 +118,7 @@ function View(options) {
   
   var o = self._options = options || {};
   var dom = self._dom = self.create(o);
+  $(dom).attr('id', o.id).ac('xw-view');
   dom.view = self;
   self.init(o);
 }
@@ -129,7 +130,7 @@ View.prototype = {
   init: function(o) {
     var self = this;
     var dom = self.dom();
-    var el = $(dom).attr('id', o.id).ac('xw-view');
+    var el = $(dom);
     
     if( o.style ) el.css(o.style);
     if( o.cls ) el.ac(o.cls);
@@ -327,6 +328,55 @@ module.exports = Container;
 
 /***/ }),
 /* 3 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var $ = __webpack_require__(0);
+var View = __webpack_require__(1);
+
+function Anchor(options) {
+  View.apply(this, arguments);
+}
+
+var proto = Anchor.prototype = Object.create(View.prototype);
+
+proto.create = function() {
+  return $('<a href="javascript:;" class="xw-anchor">')[0];
+};
+
+proto.init = function(o) {
+  View.prototype.init.apply(this, arguments);
+  this.update();
+};
+
+proto.update = function() {
+  var o = this.options();
+  
+  this.text(o.text);
+};
+
+proto.text = function(text) {
+  var o = this.options();
+  var el = $(this.dom());
+  if( !arguments.length ) return o.text;
+  el.html(text);
+  o.text = text;
+  return this;
+};
+
+proto.href = function(href) {
+  var o = this.options();
+  var el = $(this.dom());
+  if( !arguments.length ) return o.href;
+  el.attr('href', href);
+  o.href = href;
+  return this;
+};
+
+View.type('anchor', Anchor);
+module.exports = Anchor;
+
+/***/ }),
+/* 4 */
 /***/ (function(module, exports) {
 
 var matches = Element.prototype.matches || 
@@ -503,7 +553,7 @@ var lib = module.exports = {
 };
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $ = __webpack_require__(0);
@@ -543,7 +593,144 @@ View.type('block', Block);
 module.exports = Block;
 
 /***/ }),
-/* 5 */
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var $ = __webpack_require__(0);
+var View = __webpack_require__(1);
+var Container = __webpack_require__(2);
+
+function Button(options) {
+  View.apply(this, arguments);
+}
+
+var proto = Button.prototype = Object.create(Container.prototype);
+
+proto.create = function() {
+  return $('<a class="xw-button">\
+    <span class="xw-button-icon xw-hidden"></span>\
+    <span class="xw-button-text"></span>\
+    <span class="xw-button-badge xw-hidden"></span>\
+    <span class="xw-button-caret xw-hidden"></span>\
+  </a>')[0];
+};
+
+proto.init = function(o) {
+  var self = this;
+  var el = $(self.dom());
+  var ul = $('<ul class="xw-button-items"></ul>');
+  
+  self
+  .icon(o.icon)
+  .text(o.text)
+  .link(o.link)
+  .target(o.target)
+  .badge(o.badge)
+  .ddalign(o.ddalign)
+  .on('options', function(e) {
+    self.icon(e.detail.options.icon);
+    self.text(e.detail.options.text);
+    self.link(e.detail.options.link);
+    self.target(e.detail.options.target);
+    self.badge(e.detail.options.badge);
+    self.ddalign(e.detail.options.ddalign);
+  })
+  .on('additem', function(e) {
+    var item = e.detail.item;
+    var index = e.detail.index;
+    var view = View.create(item, 'navitem');
+    view.dom()._item = item;
+    
+    el.find('.xw-button-caret').rc('xw-hidden');
+    ul.append(view.dom(), index).appendTo(el);
+  })
+  .on('removeitem', function(e) {
+    ul.children().each(function() {
+      if( e.detail.item === this._item ) $(this).remove();
+    });
+    
+    if( !ul.children().length ) {
+      el.find('.xw-button-caret').ac('xw-hidden');
+      ul.remove();
+    }
+  });
+  
+  Container.prototype.init.apply(self, arguments);
+};
+
+proto.ddalign = function(ddalign) {
+  var o = this.options();
+  var el = $(this.dom());
+  if( !arguments.length ) return o.ddalign;
+  
+  ddalign = (ddalign && ddalign.split(' ')) || [];
+  el.rc('xw-button-dropdown-right').rc('xw-button-dropdown-center').rc('xw-button-dropdown-up');
+  if( ~ddalign.indexOf('right') ) el.ac('xw-button-dropdown-right');
+  if( ~ddalign.indexOf('center') ) el.ac('xw-button-dropdown-center');
+  if( ~ddalign.indexOf('up') ) el.ac('xw-button-dropdown-up');
+  o.ddalign = ddalign.join(' ');
+  
+  return this;
+};
+
+proto.icon = function(icon) {
+  var o = this.options();
+  var el = $(this.dom()).find('.xw-button-icon');
+  if( !arguments.length ) return o.icon;
+  el.html(icon);
+  o.icon = icon;
+  
+  if( icon ) el.rc('xw-hidden');
+  else el.ac('xw-hidden');
+  return this;
+};
+
+proto.link = function(link) {
+  var o = this.options();
+  var el = $(this.dom()).children('a');
+  if( !arguments.length ) return o.link;
+  el.attr('href', link || 'javascript:;');
+  o.link = link;
+  return this;
+};
+
+proto.target = function(target) {
+  var o = this.options();
+  var el = $(this.dom()).children('a');
+  if( !arguments.length ) return o.target;
+  el.attr('target', target);
+  o.target = target;
+  return this;
+};
+
+proto.text = function(text) {
+  var o = this.options();
+  var el = $(this.dom()).children('.xw-button-text');
+  if( !arguments.length ) return o.text;
+  el.html(text);
+  o.text = text;
+  return this;
+};
+
+proto.badge = function(badge) {
+  var o = this.options();
+  var el = $(this.dom()).find('.xw-button-badge');
+  if( !arguments.length ) return o.badge;
+  el.html(badge);
+  
+  o.badge = badge;
+  
+  if( badge ) el.rc('xw-hidden');
+  else el.ac('xw-hidden');
+  return this;
+};
+
+View.type('button', Button);
+module.exports = Button;
+
+
+/***/ }),
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $ = __webpack_require__(0);
@@ -625,7 +812,7 @@ View.type('cards', Cards);
 module.exports = Cards;
 
 /***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $ = __webpack_require__(0);
@@ -644,13 +831,13 @@ proto.create = function() {
 module.exports = Label;
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $ = __webpack_require__(0);
 var View = __webpack_require__(1);
 var Container = __webpack_require__(2);
-var NavItem = __webpack_require__(14);
+var NavItem = __webpack_require__(17);
 
 function Navigation(options) {
   View.apply(this, arguments);
@@ -717,37 +904,9 @@ proto.select = function(id) {
 View.type('navigation', Navigation);
 module.exports = Navigation;
 
-/*
-<div class="xw-navigation">
-  <div class="xw-navigation-title">Title</div>
-  <ul class="xw-navigation-items">
-    <li class="xw-navitem">
-      <a href="#">
-        <i class="xw-navitem-icon fa fa-rocket"></i>
-        <span class="xw-navitem-label">Label</span>
-      </a>
-    </li>
-    <li class="xw-navitem">
-      <a class="xw-navitem-accordion xw-navitem-open" href="javascript:;">
-        <i class="xw-navitem-icon fa fa-rocket"></i>
-        <span class="xw-navitem-label">Label</span>
-        <i class="xw-navitem-caret"></i>
-      </a>
-      <ul class="xw-navitem-items">
-        <li class="xw-navitem xw-active">
-          <a href="#">
-            <i class="xw-navitem-icon fa fa-rocket"></i>
-            <span class="xw-navitem-label">Label</span>
-          </a>
-        </li>
-      </ul>
-    </li>
-  </ul>
-</div>
-*/
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -758,7 +917,7 @@ module.exports = {
     items: [
       {
         id: 'topbar',
-        cls: 'xw-topbar',
+        cls: 'xw-dashboard-topbar',
         style: {
           '-webkit-app-region': 'drag'
         },
@@ -774,9 +933,11 @@ module.exports = {
             flexbox: 'horizontal',
             items: [
               {
-                id: 'topnav-left'
+                id: 'topnav-left',
+                type: 'toolbar'
               }, {
                 id: 'topnav-right',
+                type: 'toolbar',
                 flex: 1,
                 style: {
                   'text-align': 'right'
@@ -791,14 +952,14 @@ module.exports = {
         flex: 1,
         items: [
           {
-            id: 'sidebar',
+            id: 'sidebar-wrapper',
             flexbox: 'vertical',
-            cls: 'xw-sidebar xw-dark',
+            cls: 'xw-dashboard-sidebar xw-dark',
             width: 250,
             items: [
               {
-                id: 'sidebar-cards',
-                type: 'cards'
+                id: 'sidebar',
+                type: 'block'
               }
             ]
           }, {
@@ -813,7 +974,7 @@ module.exports = {
 };
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, exports) {
 
 module.exports = {
@@ -824,11 +985,12 @@ module.exports = {
 };
 
 /***/ }),
-/* 10 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $ = __webpack_require__(0);
 var View = __webpack_require__(1);
+var Anchor = __webpack_require__(3);
 
 function Profile(options) {
   View.apply(this, arguments);
@@ -839,7 +1001,7 @@ var proto = Profile.prototype = Object.create(View.prototype);
 proto.create = function() {
   return $('<div class="xw-profile">\
     <div class="xw-profile-image xw-hidden">\
-      <img src="" />\
+      <div class="xw-profile-image-body"></div>\
     </div>\
     <div class="xw-profile-body">\
       <div class="xw-profile-links">\
@@ -852,6 +1014,7 @@ proto.create = function() {
 };
 
 proto.init = function(o) {
+  View.prototype.init.apply(this, arguments);
   this.update();
 };
 
@@ -862,7 +1025,7 @@ proto.update = function() {
   .text(o.text)
   .image(o.image)
   .links(o.links);
-}
+};
 
 proto.text = function(text) {
   var o = this.options();
@@ -877,9 +1040,12 @@ proto.image = function(image) {
   var o = this.options();
   var el = $(this.dom()).children('.xw-profile-image');
   if( !arguments.length ) return o.image;
-  el.find('img').attr('src', image);
+  
+  el.children('.xw-profile-image-body').css('background-image', 'url(' + image + ')');
+  
   if( image ) el.rc('xw-hidden');
   else el.ac('xw-hidden');
+  
   o.image = image;
   return this;
 };
@@ -895,11 +1061,8 @@ proto.links = function(links) {
   links && links.forEach(function(link) {
     if( typeof link == 'string' ) link = {text:link};
     if( typeof link != 'object' ) return;
-    var anchor = $('<a>').html(link.text || 'Link').attr({
-      href: link.href || 'javascript:;',
-      target: link.target
-    });
-    el.append(anchor);
+    
+    el.append(new Anchor(link).dom());
   });
   
   o.links = links;
@@ -910,7 +1073,7 @@ View.type('profile', Profile);
 module.exports = Profile;
 
 /***/ }),
-/* 11 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $ = __webpack_require__(0);
@@ -1128,7 +1291,47 @@ View.type('tabbed', Tabbed);
 module.exports = Tabbed;
 
 /***/ }),
-/* 12 */
+/* 14 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var $ = __webpack_require__(0);
+var View = __webpack_require__(1);
+var Container = __webpack_require__(2);
+
+function Toolbar(options) {
+  Container.apply(this, arguments);
+}
+
+var proto = Toolbar.prototype = Object.create(Container.prototype);
+
+proto.create = function(o) {
+  return $('<div class="xw-toolbar"></div>')[0];
+};
+
+proto.init = function(o) {
+  var self = this;
+  var el = $(self.dom());
+  
+  self.on('additem', function(e) {
+    var item = e.detail.item;
+    var view = View.create(item);
+    view.dom()._item = item;
+    el.append(view.dom());
+  })
+  .on('removeitem', function(e) {
+    el.children().each(function() {
+      if( e.detail.item === this._item ) $(this).remove();
+    });
+  });
+  
+  Container.prototype.init.apply(self, arguments);
+};
+
+View.type('toolbar', Toolbar);
+module.exports = Toolbar;
+
+/***/ }),
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var win = window;
@@ -1136,7 +1339,7 @@ var Extensions = function() {}
 Extensions.prototype = new Array();
 var extensions = new Extensions();
 
-var util = __webpack_require__(3);
+var util = __webpack_require__(4);
 var isArrayLike = util.isArrayLike;
 var create = util.create;
 var isHTML = util.isHTML;
@@ -1204,10 +1407,10 @@ Context.each = each;
 module.exports = Context;
 
 /***/ }),
-/* 13 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var util = __webpack_require__(3);
+var util = __webpack_require__(4);
 var win = window;
 var doc = document;
 
@@ -1872,7 +2075,7 @@ module.exports = function(ctx) {
 };
 
 /***/ }),
-/* 14 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var $ = __webpack_require__(0);
@@ -1890,6 +2093,9 @@ proto.create = function() {
       <a href="javascript:;">\
         <span class="xw-navitem-icon"></span>\
         <span class="xw-navitem-text"></span>\
+        <div class="xw-navitem-acc">\
+          <span class="xw-navitem-badge"></span>\
+        </div>\
       </a>\
   </li>')[0];
 };
@@ -1902,10 +2108,12 @@ proto.init = function(o) {
   .text(o.text)
   .icon(o.icon)
   .link(o.link)
+  .badge(o.badge)
   .on('options', function(e) {
     self.text(e.detail.options.text);
     self.icon(e.detail.options.icon);
     self.link(e.detail.options.link);
+    self.badge(e.detail.options.badge);
   })
   .on('additem', function(e) {
     var item = e.detail.item;
@@ -1915,9 +2123,10 @@ proto.init = function(o) {
     view.dom()._item = item;
     
     if( !ul.length ) {
-      el.children('a')
-      .append('<i class="xw-navitem-caret">')
-      .on('click', function() {
+      el.children('a').children('.xw-navitem-acc')
+      .append('<span class="xw-navitem-caret">');
+      
+      el.children('a').on('click', function() {
         self.toggle();
       });
       
@@ -1963,6 +2172,18 @@ proto.text = function(text) {
   if( !arguments.length ) return o.text;
   el.html(text);
   o.text = text;
+  return this;
+};
+
+proto.badge = function(badge) {
+  var o = this.options();
+  var el = $(this.dom()).find('.xw-navitem-badge');
+  if( !arguments.length ) return o.badge;
+  el.html(badge);
+  
+  if( badge ) el.css('opacity', 1);
+  else el.css('opacity', 0);
+  o.badge = badge;
   return this;
 };
 
@@ -2033,24 +2254,27 @@ module.exports = NavItem;
 
 
 /***/ }),
-/* 15 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 var View = __webpack_require__(1);
 var Container = __webpack_require__(2);
-var Block = __webpack_require__(4);
-var Label = __webpack_require__(6);
-var Navigation = __webpack_require__(7);
-var Tabbed = __webpack_require__(11);
-var Cards = __webpack_require__(5);
-var Profile = __webpack_require__(10);
+var Block = __webpack_require__(5);
+var Label = __webpack_require__(8);
+var Navigation = __webpack_require__(9);
+var Tabbed = __webpack_require__(13);
+var Cards = __webpack_require__(7);
+var Profile = __webpack_require__(12);
+var Anchor = __webpack_require__(3);
+var Button = __webpack_require__(6);
+var Toolbar = __webpack_require__(14);
 var $ = __webpack_require__(0);
 var perspectives = {};
 var currentperspective;
 
 var presets = {
-  'default': __webpack_require__(9),
-  'dashboard': __webpack_require__(8)
+  'default': __webpack_require__(11),
+  'dashboard': __webpack_require__(10)
 };
 
 function Workbench(options) {
@@ -2061,12 +2285,6 @@ function Workbench(options) {
   if( !preset ) throw new Error('not exists preset');
   
   var view = this._view = View.create(preset.view);
-  
-  if( options.items ) {
-    if( preset.target ) view.find(preset.target).add(options.items);
-    else view.add(options.items);
-  }
-  
   var dom = this._dom = $('<div>').ac('xw').append(view.dom())[0];
   
   dom.workbench = this;
@@ -2129,6 +2347,9 @@ Workbench.Navigation = Navigation;
 Workbench.Tabbed = Tabbed;
 Workbench.Cards = Cards;
 Workbench.Profile = Profile;
+Workbench.Anchor = Anchor;
+Workbench.Button = Button;
+Workbench.Toolbar = Toolbar;
 Workbench.type = View.type;
 
 module.exports = Workbench;

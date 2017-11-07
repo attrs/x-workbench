@@ -1,17 +1,33 @@
-@white:                #fff;
-@muted:                #999;
-@page-bg:              #eee;
-@text-color-light:     #aaa;
+@white:                 #fff;
+@muted:                 #999;
+@page-bg:               #eee;
+@text-color-light:      #aaa;
 
-@active-color:         #3498db;
-@border-color:         rgba(0,0,0,0.07);
-@text-color:           #3E3E3E;
+@brand-default:         #E6E6E6;
+@brand-primary:         #3498db;
+@brand-success:         #70BC1F;
+@brand-info:            #3bafda;
+@brand-warning:         #f6bb42;
+@brand-danger:          #E74D2B;
+@brand-system:          #9F7BE1;
+@brand-light:           #fafafa;
+@brand-dark:            #3b3f4f;
+@brand-alert:           #967adc;
+@brand-secondary:       @brand-danger;
 
-@active-color-dark:    #55AAC7;
-@bg-color-dark:        #2D3230;
-@bg-color-dark-2:      #292826;
-@border-color-dark:    rgba(255,255,255,0.07);
-@text-color-dark:      #CACBCB;
+@active-color:          @brand-primary;
+@badge-color:           fade(@brand-primary, 95%);
+@badge-text-color:      white;
+@border-color:          rgba(0,0,0,0.1);
+@text-color:            #3E3E3E;
+
+@active-color-dark:     #55AAC7;
+@bg-color-dark:         #2D3230;
+@bg-color-dark-2:       #292826;
+@border-color-dark:     rgba(255,255,255,0.07);
+@text-color-dark:       #CACBCB;
+
+@caret-image:           url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAAXNSR0IArs4c6QAAAAlwSFlzAAALEwAACxMBAJqcGAAAAVlpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IlhNUCBDb3JlIDUuNC4wIj4KICAgPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4KICAgICAgPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIKICAgICAgICAgICAgeG1sbnM6dGlmZj0iaHR0cDovL25zLmFkb2JlLmNvbS90aWZmLzEuMC8iPgogICAgICAgICA8dGlmZjpPcmllbnRhdGlvbj4xPC90aWZmOk9yaWVudGF0aW9uPgogICAgICA8L3JkZjpEZXNjcmlwdGlvbj4KICAgPC9yZGY6UkRGPgo8L3g6eG1wbWV0YT4KTMInWQAAALZJREFUKBWlUjEOgkAQPBRjoY21HfFjNLb+xljb+w7jS+yxR2bkRgYMArrJZIe92dm7DSF8RoJSCjBPim7DfGy3Gjl1Y029Bn7AphLIgAuwBm7AE6COuTdm8WSJfAYozmONieZfwwUnKGmwtw6/qZUbumhoOIIXgBtoNyZr05V93sEfwDbW/HYmq+nPk9110pv/2ram7nD7K3CwBw1uWVukyag/zMxfVAaqD06UUJkGnN410vk7V4WsFGQSWHtEAAAAAElFTkSuQmCC');
 
 .xw {
   padding: 0;
@@ -25,15 +41,14 @@
   display: flex;
   flex-flow: column;
   
-  @import "topbar";
-  @import "sidebar";
   @import "page";
-  @import "footer";
   @import "navigation";
   @import "tabbed";
   @import "flexbox";
   @import "cards";
   @import "profile";
+  @import "button";
+  @import "dashboard";
   
   &.xw-dark, & .xw-dark {
     background-color: @bg-color-dark;
@@ -46,6 +61,10 @@
   
   .xw-hidden {
     display: none !important;
+  }
+  
+  a, a:hover, a:active, a:focus {
+    outline: 0;
   }
 }
 
