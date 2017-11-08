@@ -20,31 +20,39 @@ wb
 .find('topnav-right')
 .items([
   {
+    id: 'topbtn-messages',
     type: 'button',
     text: 'Messages',
     icon: '<i class="fa fa-bell-o"></i>',
     badge: '99+',
     items: [
       {
-        icon: '<i class="fa fa-arrows-alt"></i>',
-        text: 'Hello, Puss'
+        icon: '<i class="fa fa-circle-o"></i>',
+        text: 'menuitem 1'
       }
     ]
   }, {
+    id: 'topbtn-user',
     type: 'button',
     icon: '<i class="fa fa-user-o"></i>',
     text: 'Puss in Boots',
-    ddalign: 'center',
-    onclick: function() {
-      console.log('click');
-    },
+    ddalign: 'right',
     items: [
       {
-        icon: '<i class="fa fa-arrows-alt"></i>',
-        text: 'x-workbench'
+        icon: '<i class="fa fa-circle-o"></i>',
+        text: 'menuitem 1'
       }, {
-        icon: '<i class="fa fa-arrows-alt"></i>',
-        text: 'x-workbench'
+        icon: '<i class="fa fa-circle-o"></i>',
+        text: 'menuitem 1'
+      }, {
+        icon: '<i class="fa fa-circle-o"></i>',
+        text: 'menuitem 1'
+      }, {
+        icon: '<i class="fa fa-circle-o"></i>',
+        text: 'menuitem 1'
+      }, {
+        icon: '<i class="fa fa-circle-o"></i>',
+        text: 'menuitem 1'
       }
     ]
   }, {

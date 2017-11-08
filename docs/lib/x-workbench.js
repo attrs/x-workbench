@@ -136,8 +136,15 @@ View.prototype = {
     if( o.cls ) el.ac(o.cls);
     if( o.flexbox ) el.attr('flexbox', o.flexbox);
     if( o.flex ) el.attr('flex', o.flex);
-    if( o.width ) el.css('width', o.width + 'px');
-    if( o.html ) el.html(o.html);
+    if( o.width ) {
+      if( typeof +o.width == 'number' ) el.css('width', o.width + 'px');
+      else if( typeof o.width == 'string' ) el.css('width', o.width);
+    }
+    if( o.height ) {
+      if( typeof +o.width == 'number' ) el.css('width', o.width + 'px');
+      else if( typeof o.width == 'string' ) el.css('width', o.width);
+    }
+    if( o.html ) self.html(o.html);
     
     Object.getOwnPropertyNames(o).forEach(function(name) {
       if( !~['on', 'once'].indexOf(name) && !name.indexOf('on') ) {
@@ -160,27 +167,43 @@ View.prototype = {
   dom: function() {
     return this._dom;
   },
+  body: function() {
+    return this._dom;
+  },
+  html: function(html) {
+    var self = this;
+    var el = $(self.body());
+    if( !arguments.length ) return el.html();
+    el.html(html);
+    return self;
+  },
   find: function(id) {
-    return $(this.dom()).find('#' + id).map(function(el) {
+    return $(this.dom()).find('#' + id + '.xw-view').map(function(el) {
       return el.view;
     }).filter(function(item) {
       return item;
     })[0];
+  },
+  findall: function(type) {
+    return $(this.dom()).find('.xw-view').map(function(el) {
+      return el.view && (el.view instanceof type) && el.view;
+    }).filter(function(item) {
+      return item;
+    });
   },
   query: function(selector) {
     return $(this.dom()).find(selector);
   },
   remove: function() {
     $(this.dom()).remove();
+    self.fire('remove');
     return this;
   },
   clear: function() {
-    $(this.dom()).empty();
-    return this;
-  },
-  html: function(html) {
-    $(this.dom()).html(html);
-    return this;
+    var self = this;
+    $(self.body()).empty();
+    self.fire('clear');
+    return self;
   },
   workbench: function() {
     var self = this;
@@ -307,7 +330,13 @@ proto.clearitems = function() {
   self.items().forEach(function(item) {
     self.removeitem(item);
   });
-  self.fire('clearitems');
+  return self;
+};
+
+proto.clear = function() {
+  var self = this;
+  self.clearitems();
+  View.prototype.clear.call(self);
   return self;
 };
 
@@ -615,6 +644,10 @@ proto.create = function() {
   </a>')[0];
 };
 
+proto.body = function() {
+  return this.dom().querySelector('.xw-button-text');
+};
+
 proto.init = function(o) {
   var self = this;
   var el = $(self.dom());
@@ -653,6 +686,16 @@ proto.init = function(o) {
       el.find('.xw-button-caret').ac('xw-hidden');
       ul.remove();
     }
+  })
+  .on('click', function() {
+    if( el.children('.xw-button-items').length ) {
+      self.toggleopen();
+    }
+  });
+  
+  $(document).on('click', function(e) {
+    if( el[0].contains(e.target) ) return;
+    self.open(false);
   });
   
   Container.prototype.init.apply(self, arguments);
@@ -672,6 +715,27 @@ proto.ddalign = function(ddalign) {
   
   return this;
 };
+
+proto.isopen = function() {
+  return $(this.dom()).hc('xw-button-open');
+};
+
+proto.open = function(b) {
+  var self = this;
+  var el = $(self.dom());
+  if( !arguments.length ) b = true;
+  
+  if( b ) {
+    el.ac('xw-button-open');
+  } else {
+    el.rc('xw-button-open');
+  }
+  return self;
+};
+
+proto.toggleopen = function() {
+  return this.open(!this.isopen());
+}
 
 proto.icon = function(icon) {
   var o = this.options();
@@ -1011,6 +1075,10 @@ proto.create = function() {
       </div>\
     </div>\
   </div>')[0];
+};
+
+proto.body = function() {
+  return this.dom().querySelector('.xw-profile-text');
 };
 
 proto.init = function(o) {
@@ -2235,8 +2303,10 @@ proto.active = function(b) {
 proto.select = function() {
   var self = this;
   var navigation = this.navigation();
-  $(navigation.dom()).find('.xw-navitem-selected').rc('xw-navitem-selected');
-  $(navigation.dom()).find('.xw-navitem-active').rc('xw-navitem-active');
+  if( navigation ) {
+    $(navigation.dom()).find('.xw-navitem-selected').rc('xw-navitem-selected');
+    $(navigation.dom()).find('.xw-navitem-active').rc('xw-navitem-active');
+  }
   $(self.dom()).ac('xw-navitem-selected').parent(function() {
     var view = this.view;
     if( view === self ) return view.active() && false;
@@ -2310,6 +2380,12 @@ Workbench.prototype = {
   find: function(selector) {
     return this._view.find(selector);
   },
+  findall: function(type) {
+    return this._view.findall(type);
+  },
+  query: function(selector) {
+    return this._view.query(selector);
+  },
   render: function(target) {
     $(this._dom).appendTo(target);
     return this;
@@ -2333,6 +2409,18 @@ Workbench.prototype = {
     currentperspective = perspective;
     perspective.activate && perspective.activate.apply(perspective, [].slice.call(arguments, 1));
     return this;
+  },
+  fire: function(type, detail, cancellable, bubble) {
+    return this._view.fire.apply(this._view, arguments);
+  },
+  on: function(type, fn) {
+    return this._view.on.apply(this._view, arguments);
+  },
+  once: function(type, fn) {
+    return this._view.once.apply(this._view, arguments);
+  },
+  off: function(type, fn) {
+    return this._view.off.apply(this._view, arguments);
   },
   Workbench: Workbench
 };
