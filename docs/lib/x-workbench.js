@@ -154,7 +154,6 @@ View.prototype = {
     });
   },
   create: function(o) {
-    console.log('view create', o);
     return $('<div/>')[0];
   },
   options: function(options) {
@@ -247,6 +246,18 @@ View.prototype = {
   }
 };
 
+function Separator(options) {
+  View.apply(this, arguments);
+}
+
+Separator.prototype = Object.create(View.prototype, {
+  create: {
+    value: function() {
+      return $('<div class="xw-separator" />')[0];
+    }
+  }
+});
+
 var types = {};
 types['default'] = View;
 
@@ -261,6 +272,7 @@ View.create = function(o, deftype) {
   if( !arguments.length ) return new View();
   if( !o ) return console.error('arguments cannot be null');
   if( o instanceof View ) return o;
+  if( o === '-' ) return new Separator();
   
   var Type = o.type ? types[o.type] : types[deftype || 'default'];
   if( !Type ) return console.error('not fount view type: ' + (o.type || deftype));
@@ -268,6 +280,7 @@ View.create = function(o, deftype) {
   return new Type(o);
 };
 
+View.type('separator', Separator);
 View.type('view', View);
 module.exports = View;
 
@@ -301,7 +314,7 @@ proto.additem = function(o, index) {
     
     if( index >= 0 ) items.splice(index, 0, item);
     else items.push(item);
-    self.fire('additem', {item:item, index: items.indexOf(item)});
+    self.fire('additem', {item:item, index: index});
   });
   
   return self;

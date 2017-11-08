@@ -41,7 +41,7 @@ wb
       {
         icon: '<i class="fa fa-circle-o"></i>',
         text: 'menuitem 1'
-      }, {
+      }, '-', {
         icon: '<i class="fa fa-circle-o"></i>',
         text: 'menuitem 1'
       }, {
@@ -50,7 +50,7 @@ wb
       }, {
         icon: '<i class="fa fa-circle-o"></i>',
         text: 'menuitem 1'
-      }, {
+      }, '-', {
         icon: '<i class="fa fa-circle-o"></i>',
         text: 'menuitem 1'
       }
