@@ -553,7 +553,7 @@ proto.init = function(o) {
 proto.update = function() {
   var o = this.options();
   
-  this.text(o.text);
+  this.text(o.text).href(o.href).target(o.target);
 };
 
 proto.text = function(text) {
@@ -569,8 +569,17 @@ proto.href = function(href) {
   var o = this.options();
   var el = $(this.dom());
   if( !arguments.length ) return o.href;
-  el.attr('href', href);
+  el.attr('href', href || 'javascript:;');
   o.href = href;
+  return this;
+};
+
+proto.target = function(target) {
+  var o = this.options();
+  var el = $(this.dom());
+  if( !arguments.length ) return o.target;
+  el.attr('target', target);
+  o.target = target;
   return this;
 };
 
@@ -2477,9 +2486,10 @@ proto.init = function(o) {
   
   self.on('additem', function(e) {
     var item = e.detail.item;
-    var view = View.create(item);
+    var index = e.detail.index;
+    var view = View.create(item, 'button');
     view.dom()._item = item;
-    el.append(view.dom());
+    el.append(view.dom(), index);
   })
   .on('removeitem', function(e) {
     el.children().each(function() {
