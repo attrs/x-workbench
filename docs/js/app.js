@@ -1878,7 +1878,7 @@ proto.title = function(title) {
 };
 
 proto.selected = function() {
-  var itemel = $(this.dom()).find('.xw-active')[0];
+  var itemel = $(this.dom()).find('.xw-navitem-selected')[0];
   return itemel && itemel.view;
 };
 
