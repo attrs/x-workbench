@@ -81,6 +81,8 @@ wb
   }, {
     id: 'sidebar-account',
     type: 'navigation',
+    group: 'sidenav',
+    autocollapse: false,
     title: 'My Account',
     items: [
       {
@@ -128,6 +130,7 @@ wb
   }, {
     id: 'sidebar-service',
     type: 'navigation',
+    group: 'sidenav',
     title: 'Service',
     items: [
       {

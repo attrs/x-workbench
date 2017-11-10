@@ -50,7 +50,7 @@ li.xw-navitem {
     
     &:hover {
       i {
-        color: lighten(@active-color, 10%);
+        opacity: .7;
       }
     }
     
@@ -88,7 +88,7 @@ li.xw-navitem {
       & > .xw-navitem-badge {
         display: inline-block;
         min-width: 10px;
-        padding: 4px 7px 3px 7px;
+        padding: 4px 7px 4px 7px;
         font-size: 0.8em;
         font-weight: bold;
         line-height: 1;
@@ -111,7 +111,7 @@ li.xw-navitem {
     }
   }
   
-  &.xw-navitem-open > a > .xw-navitem-acc > .xw-navitem-caret {
+  &.xw-navitem-expand > a > .xw-navitem-acc > .xw-navitem-caret {
     transform: rotate(90deg);
   }
   
@@ -152,7 +152,7 @@ li.xw-navitem {
     }
   }
   
-  &.xw-navitem-open > ul.xw-navitem-items {
+  &.xw-navitem-expand > ul.xw-navitem-items {
     display: block;
   }
 }
