@@ -1946,7 +1946,7 @@ proto.deselect = function(id) {
 
 proto.collapseall = function() {
   this.findall(NavItem).forEach(function(navitem) {
-    navitem.collapse();
+    navitem.active(false).collapse();
   });
   return this;
 };
