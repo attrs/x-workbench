@@ -177,15 +177,21 @@ View.prototype = {
     return self;
   },
   find: function(id) {
-    return $(this.dom()).find('#' + id + '.xw-view').map(function(el) {
-      return el.view;
-    }).filter(function(item) {
-      return item;
-    })[0];
+    if( id instanceof View ) return id;
+    if( typeof id == 'string' ) {
+      var node = this.dom().querySelector('#' + id + '.xw-view');
+      return node && node.view;
+    }
+    return this.findall(id)[0];
   },
-  findall: function(type) {
-    return $(this.dom()).find('.xw-view').map(function(el) {
-      return el.view && (el.view instanceof type) && el.view;
+  findall: function(id) {
+    var el = $(this.dom());
+    if( typeof id == 'string' ) els = el.find('#' + id + '.xw-view');
+    else els = el.find('.xw-view');
+    
+    return els.map(function(node) {
+      if( typeof id == 'string' ) return node.view;
+      if( typeof id == 'function' ) return (node.view instanceof id) && node.view;
     }).filter(function(item) {
       return item;
     });
@@ -194,9 +200,10 @@ View.prototype = {
     return $(this.dom()).find(selector);
   },
   remove: function() {
-    $(this.dom()).remove();
+    var self = this;
+    $(self.dom()).remove();
     self.fire('remove');
-    return this;
+    return self;
   },
   clear: function() {
     var self = this;
@@ -218,6 +225,14 @@ View.prototype = {
     self._data = data;
     self.fire('data', {data:data});
     return self;
+  },
+  show: function() {
+    $(this.dom()).show();
+    return this;
+  },
+  hide: function() {
+    $(this.dom()).hide();
+    return this;
   },
   fire: function(type, detail, cancellable, bubble) {
     return !!$(this.dom()).fire(type, detail, cancellable, bubble)[0];
@@ -627,9 +642,10 @@ proto.init = function(o) {
   
   self.on('additem', function(e) {
     var item = e.detail.item;
+    var index = e.detail.index;
     var view = View.create(item);
     view.dom()._item = item;
-    el.append(view.dom());
+    el.append(view.dom(), index);
   })
   .on('removeitem', function(e) {
     el.children().each(function() {
@@ -945,6 +961,10 @@ proto.init = function(o) {
   
   self
   .title(o.title)
+  .deselect()
+  .group(o.group)
+  .multiple(o.multiple === true ? true : false)
+  .autocollapse(o.autocollapse === false ? false : true)
   .on('options', function(e) {
     self.title(e.detail.options.title);
   })
@@ -964,6 +984,31 @@ proto.init = function(o) {
   Container.prototype.init.apply(self, arguments);
 };
 
+proto.group = function(group) {
+  var o = this.options();
+  var el = $(this.dom());
+  if( !arguments.length ) return o.group;
+  o.group = group;
+  
+  el.attr('data-navigation-group', group);
+  
+  return this;
+};
+
+proto.multiple = function(multiple) {
+  var o = this.options();
+  if( !arguments.length ) return o.multiple;
+  o.multiple = multiple;
+  return this;
+};
+
+proto.autocollapse = function(autocollapse) {
+  var o = this.options();
+  if( !arguments.length ) return o.autocollapse;
+  o.autocollapse = autocollapse;
+  return this;
+};
+
 proto.title = function(title) {
   var o = this.options();
   var el = $(this.dom()).children('.xw-navigation-title');
@@ -977,14 +1022,68 @@ proto.title = function(title) {
 };
 
 proto.selected = function() {
-  var itemel = $(this.dom()).find('.xw-navitem-selected')[0];
-  return itemel && itemel.view;
+  return this._selected = this._selected || [];
+};
+
+proto.deselect = function(id) {
+  var self = this;
+  var selected = self._selected = self._selected || [];
+  selected.forEach(function(node) {
+    if( !node ) return;
+    if( !id || node === id || node.id === id ) {
+      node.active(false);
+      node.fire('deselected');
+      self.fire('deselected', {node:node});
+      selected.splice(selected.indexOf(node), 1);
+    }
+  });
+  return this;
+};
+
+proto.collapseall = function() {
+  this.findall(NavItem).forEach(function(navitem) {
+    navitem.collapse();
+  });
+  return this;
 };
 
 proto.select = function(id) {
-  var item = this.find(id);
-  item && item.select();
-  return this;
+  var self = this;
+  if( !id ) return console.warn('required select node(id/instance)') && self;
+  
+  var node = self.find(id);
+  if( !node ) return console.warn('cannot find node for select', id) && self;
+  
+  var o = self.options();
+  var el = $(self.dom());
+  var group = self.group();
+  var autocollapse = self.autocollapse();
+  
+  if( !o.multiple ) self.deselect();
+  
+  if( group ) {
+    self.workbench().query('[data-navigation-group="' + group + '"]').forEach(function(node) {
+      var view = node.view;
+      if( !view || view === self ) return;
+      if( typeof view.deselect == 'function' ) {
+        view.deselect();
+        if( view.autocollapse() ) view.collapseall();
+      }
+    });
+  }
+  
+  self.findall(NavItem).forEach(function(navitem) {
+    if( navitem === node ) navitem.active();
+    else if( navitem.dom().contains(node.dom()) ) navitem.expand();
+    else if( autocollapse ) navitem.collapse();
+  });
+  
+  if( !~self._selected.indexOf(node) ) {
+    self._selected.push(node);
+    node.fire('selected');
+    self.fire('selected', {node:node});
+  }
+  return self;
 };
 
 View.type('navigation', Navigation);
@@ -2240,71 +2339,94 @@ proto.init = function(o) {
   Container.prototype.init.apply(self, arguments);
 };
 
-proto.open = function() {
-  $(this.dom()).ac('xw-navitem-open');
+proto.isexpand = function() {
+  return $(this.dom()).hc('xw-navitem-expand');
+};
+
+proto.expand = function() {
+  $(this.dom()).ac('xw-navitem-expand');
   return this;
 };
 
-proto.close = function() {
-  $(this.dom()).rc('xw-navitem-open');
+proto.collapse = function() {
+  $(this.dom()).rc('xw-navitem-expand');
   return this;
 };
 
 proto.toggle = function() {
-  var dom = $(this.dom());
-  if( dom.hc('xw-navitem-open') ) dom.rc('xw-navitem-open');
-  else dom.ac('xw-navitem-open');
-  return this;
+  var self = this;
+  if( self.isexpand() ) self.collapse();
+  else self.expand();
+  return self;
 };
 
 proto.text = function(text) {
-  var o = this.options();
-  var el = $(this.dom()).find('.xw-navitem-text');
+  var self = this;
+  var o = self.options();
+  var el = $(self.dom()).find('.xw-navitem-text');
   if( !arguments.length ) return o.text;
   el.html(text);
   o.text = text;
-  return this;
+  return self;
 };
 
 proto.badge = function(badge) {
-  var o = this.options();
-  var el = $(this.dom()).find('.xw-navitem-badge');
+  var self = this;
+  var o = self.options();
+  var el = $(self.dom()).find('.xw-navitem-badge');
   if( !arguments.length ) return o.badge;
   el.html(badge);
   
   if( badge ) el.css('opacity', 1);
   else el.css('opacity', 0);
   o.badge = badge;
-  return this;
+  return self;
 };
 
 proto.icon = function(icon) {
-  var o = this.options();
-  var el = $(this.dom()).find('.xw-navitem-icon');
+  var self = this;
+  var o = self.options();
+  var el = $(self.dom()).find('.xw-navitem-icon');
   if( !arguments.length ) return o.icon;
   el.html(icon);
   o.icon = icon;
-  return this;
+  return self;
 };
 
 proto.link = function(link) {
-  var o = this.options();
-  var el = $(this.dom()).children('a');
+  var self = this;
+  var o = self.options();
+  var el = $(self.dom()).children('a');
   if( !arguments.length ) return o.link;
   el.attr('href', link || 'javascript:;');
   o.link = link;
-  return this;
+  return self;
 };
 
 proto.target = function(target) {
-  var o = this.options();
-  var el = $(this.dom()).children('a');
+  var self = this;
+  var o = self.options();
+  var el = $(self.dom()).children('a');
   if( !arguments.length ) return o.target;
   el.attr('target', target);
   o.target = target;
+  return self;
+};
+
+proto.isactive = function() {
+  return $(this.dom()).hc('xw-navitem-active');
+};
+
+proto.active = function(b) {
+  var self = this;
+  var el = $(self.dom());
+  if( !arguments.length ) b = true;
+  if( b ) el.ac('xw-navitem-active');
+  else el.rc('xw-navitem-active');
   return this;
 };
 
+// with navigation
 proto.navigation = function() {
   return $(this.dom()).parent(function() {
     return this.view && $(this).hc('xw-navigation');
@@ -2314,29 +2436,15 @@ proto.navigation = function() {
 };
 
 proto.isselected = function() {
-  return $(this.dom()).hc('xw-navitem-selected');
-};
-
-proto.active = function(b) {
-  if( !arguments.length ) b = true;
-  $(this.dom()).tc('xw-navitem-active', b);
-  return this;
+  var self = this;
+  var navigation = self.navigation();
+  return ~navigation.selected().indexOf(self) ? true : false;
 };
 
 proto.select = function() {
   var self = this;
-  var navigation = this.navigation();
-  if( navigation ) {
-    $(navigation.dom()).find('.xw-navitem-selected').rc('xw-navitem-selected');
-    $(navigation.dom()).find('.xw-navitem-active').rc('xw-navitem-active');
-  }
-  $(self.dom()).ac('xw-navitem-selected').parent(function() {
-    var view = this.view;
-    if( view === self ) return view.active() && false;
-    if( view && view instanceof NavItem ) view.active().open();
-    return $(this).hc('xw-navigation');
-  });
-  
+  var navigation = self.navigation();
+  if( navigation ) navigation.select(self);
   return self;
 };
 
