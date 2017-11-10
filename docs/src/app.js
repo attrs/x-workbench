@@ -82,7 +82,7 @@ wb
     id: 'sidebar-account',
     type: 'navigation',
     group: 'sidenav',
-    autocollapse: false,
+    autocollapse: true,
     title: 'My Account',
     items: [
       {
