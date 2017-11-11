@@ -2316,10 +2316,6 @@ proto.init = function(o) {
       el.children('a').children('.xw-navitem-acc')
       .append('<span class="xw-navitem-caret">');
       
-      el.children('a').on('click', function() {
-        self.toggle();
-      });
-      
       ul = el.append('<ul class="xw-navitem-items">').children('ul');
     }
     
@@ -2332,8 +2328,8 @@ proto.init = function(o) {
   });
   
   el.children('a')
-  .on('click', function() {
-    self.select();
+  .on('click', function(e) {
+    self.toggle().select();
   });
   
   Container.prototype.init.apply(self, arguments);
