@@ -54,7 +54,24 @@ gulp.task('build.js.min', ['build.js'], (done) => {
     .pipe(gulp.dest('dist'));
 });
 
-gulp.task('build.docs.js', ['build.js.min'], (done) => {
+gulp.task('build.less', ['build.js.min'], () => {
+  return gulp.src(path.join('lib/less/index.less'))
+    .pipe(less({
+      paths: ['lib/less']
+    }))
+    .pipe(autoprefixer())
+    .pipe(rename({
+      basename: 'x-workbench'
+    }))
+    .pipe(gulp.dest('dist'))
+    .pipe(csso())
+    .pipe(rename({
+      suffix: '.min'
+    }))
+    .pipe(gulp.dest('dist'));
+});
+
+gulp.task('build.docs.js', ['build.less'], (done) => {
   webpack(require('./webpack.config.docs.js'), function(err, stats) {
     if( err ) throw new gutil.PluginError('webpack', err);
     gutil.log('[webpack]', stats.toString({
@@ -86,7 +103,7 @@ gulp.task('build.docs', ['build.docs.less'], () => {
     .pipe(gulp.dest('docs/lib'));
 });
 
-gulp.task('build', ['build.js.min']);
+gulp.task('build', ['build.less']);
 gulp.task('docs', ['build.docs']);
 
 // conclusion
