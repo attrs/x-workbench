@@ -115,7 +115,6 @@ var $ = __webpack_require__(0);
 
 function View(options) {
   var self = this;
-  
   var o = self._options = options || {};
   var dom = self._dom = self.create(o);
   $(dom).attr('id', o.id).ac('xw-view');
@@ -175,6 +174,15 @@ View.prototype = {
     if( !arguments.length ) return el.html();
     el.html(html);
     return self;
+  },
+  findview: function(selector) {
+    var nodes = $(this.dom()).find(selector);
+    if( !nodes.length ) return null;
+    
+    var node = nodes[0];
+    if( node.view ) return node.view;
+    var parent = $(node).parent('.xw-view')[0];
+    return parent && parent.view;
   },
   find: function(id) {
     if( id instanceof View ) return id;
@@ -2506,6 +2514,9 @@ Workbench.prototype = {
   },
   find: function(selector) {
     return this._view.find(selector);
+  },
+  findview: function(selector) {
+    return this._view.findview(selector);
   },
   findall: function(type) {
     return this._view.findall(type);
