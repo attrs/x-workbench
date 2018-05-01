@@ -102,6 +102,7 @@ function View(options) {
   $(dom).attr('id', o.id).ac('xw-view');
   dom.view = self;
   self.init(o);
+  if( o.hidden ) this.hide(o);
 }
 
 View.prototype = {
@@ -217,11 +218,11 @@ View.prototype = {
     return self;
   },
   show: function() {
-    $(this.dom()).show();
+    $(this.dom()).css('display', '');
     return this;
   },
   hide: function() {
-    $(this.dom()).hide();
+    $(this.dom()).css('display', 'none');
     return this;
   },
   fire: function(type, detail, cancellable, bubble) {
