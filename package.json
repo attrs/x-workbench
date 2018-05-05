@@ -12,6 +12,8 @@
   },
   "license": "MIT",
   "dependencies": {
+    "array-equal": "^1.0.0",
+    "minimatch": "^3.0.4",
     "tinyselector": "^0.1.23"
   },
   "devDependencies": {
