@@ -1,7 +1,7 @@
 .xw-navigation {
   margin: 20px 0;
   font-size: 0.9em;
-  
+
   .xw-navigation-title {
     padding-left: 15px;
     line-height: 20px;
@@ -9,9 +9,9 @@
     color: inherit;
     font-weight: bold;
     font-size: 0.9em;
-    opacity: .65;
+    opacity: 0.65;
   }
-    
+
   & > ul.xw-navigation-items {
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -20,19 +20,21 @@
     margin: 0;
     padding: 0;
   }
-  
-  a, a:hover, a:active, a:focus {
+
+  a,
+  a:hover,
+  a:active,
+  a:focus {
     text-decoration: none;
   }
 }
-
 
 li.xw-navitem {
   position: relative;
   display: block;
   padding: 0;
   margin: 0;
-  
+
   & > a {
     position: relative;
     display: block;
@@ -42,23 +44,25 @@ li.xw-navitem {
     padding-left: 15px;
     overflow: hidden;
     color: inherit;
-    
-    &:hover, &:active, &:focus {
+
+    &:hover,
+    &:active,
+    &:focus {
       text-decoration: none;
       background: none;
     }
-    
+
     &:hover {
       i {
-        opacity: .7;
+        opacity: 0.7;
       }
     }
-    
+
     & > .xw-navitem-text {
       display: inline-block;
       line-height: 40px;
     }
-    
+
     & > .xw-navitem-icon > i {
       display: inline-block;
       line-height: 1em;
@@ -67,13 +71,13 @@ li.xw-navitem {
       width: 27px;
       text-align: center;
     }
-    
+
     & > .xw-navitem-acc {
       position: absolute;
       right: 12px;
       top: 0;
       bottom: 0;
-      
+
       & > .xw-navitem-caret {
         display: inline-block;
         vertical-align: middle;
@@ -83,9 +87,9 @@ li.xw-navitem {
         height: 12px;
         background-image: @caret-image;
         background-size: 100% 100%;
-        transition: transform .25s;
+        transition: transform 0.25s;
       }
-      
+
       & > .xw-navitem-badge {
         display: inline-block;
         min-width: 10px;
@@ -103,25 +107,26 @@ li.xw-navitem {
         background-color: @badge-color;
         color: @badge-text-color;
         opacity: 0;
-        transition: opacity .35s;
-        
-        &:active, &:focus {
+        transition: opacity 0.35s;
+
+        &:active,
+        &:focus {
           outline: none !important;
         }
       }
     }
   }
-  
+
   &.xw-navitem-expand > a > .xw-navitem-acc > .xw-navitem-caret {
     transform: rotate(90deg);
   }
-  
+
   &.xw-navitem-active {
     & > a > .xw-navitem-icon > i {
       color: @active-color;
     }
   }
-  
+
   & > .xw-navitem-items {
     display: none;
     -webkit-user-select: none;
@@ -130,20 +135,20 @@ li.xw-navitem {
     list-style: none;
     margin: 0;
     padding: 0;
-    
+
     & > li {
       line-height: 44px;
-      
+
       & > a {
         padding-left: 30px;
       }
-      
+
       &.xw-navitem-active {
         & > a > .xw-navitem-icon > i {
           color: lighten(@active-color, 10%);
         }
       }
-      
+
       // 3 depth
       & > ul.xw-navitem-items {
         li > a {
@@ -152,7 +157,7 @@ li.xw-navitem {
       }
     }
   }
-  
+
   &.xw-navitem-expand > ul.xw-navitem-items {
     display: block;
   }
@@ -161,4 +166,3 @@ li.xw-navitem {
 .xw-dark .xw-navitem-caret {
   filter: invert(100%);
 }
-
